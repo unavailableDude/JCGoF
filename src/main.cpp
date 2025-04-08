@@ -24,6 +24,14 @@ const int PIXS = 8;
 const int BOARDW = WINW;
 const int BOARDH = WINH;
 
+//function takes a reference to board and randomizes it
+void RandomizeBoard(bool (&board)[BOARDW][BOARDH]){
+	for(int i = 0; i < BOARDW; i++){
+		for(int j = 0; j < BOARDH; j++){
+			board[i][j] = rand() % 2;
+		}
+	}
+}
 
 int main(int argc, char* argv[]){
 	//initialize SDL
@@ -45,15 +53,12 @@ int main(int argc, char* argv[]){
 	SDL_RenderSetScale(renderer1, PIXS, PIXS);
 	bool board[BOARDW][BOARDH] = {false};
 	//set the board to random values
-	for(int i = 0; i < BOARDW; i++){
-		for(int j = 0; j < BOARDH; j++){
-			board[i][j] = rand() % 2 == 0;
-		}
-	}
+	RandomizeBoard(board);
 
 	SDL_Event event;
 	bool running = true;
 	while(running){
+		//handle user input
 		while(SDL_PollEvent(&event)){
 			if(event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_CLOSE){
 				running = false;
@@ -62,28 +67,9 @@ int main(int argc, char* argv[]){
 			}
 			else if(event.type == SDL_KEYDOWN){
 				switch(event.key.keysym.sym){
-					case SDLK_w:
-						break;
-					case SDLK_s:
-						break;
-
-					case SDLK_UP:
-						break;
-					case SDLK_DOWN:
-						break;
-				}
-			}
-			else if(event.type == SDL_KEYUP){
-				switch(event.key.keysym.sym){
-					case SDLK_w:
-						break;
-					case SDLK_s:
-						break;
-
-					case SDLK_UP:
-						break;
-					case SDLK_DOWN:
-						break;
+				case SDLK_r:
+					RandomizeBoard(board);
+					break;
 				}
 			}
 		}
@@ -115,12 +101,12 @@ int main(int argc, char* argv[]){
 		SDL_SetRenderDrawColor(renderer1, 40, 40, 40, 255);
 		SDL_RenderClear(renderer1);
 
+		//draw the board
 		SDL_SetRenderDrawColor(renderer1, 255, 255, 255, 255);
 		for(int i = 0; i < BOARDW; i++){
 			for(int j = 0; j < BOARDH; j++){
 				if(board[i][j]){
-					SDL_Rect rect = {i, j, 1, 1};
-					SDL_RenderFillRect(renderer1, &rect);
+					SDL_RenderDrawPoint(renderer1, i, j);
 				}
 			}
 		}
