@@ -1,7 +1,7 @@
 /*
 	main.cpp
 	Created on: 13.03.2025
-	by: Mohammad Ayad Ghanim	"full M.A.G"
+	by: Mohammad Ayad Ghanim	"full M.A.G",		mohammadayad11144@yahoo.com
 */
 
 
@@ -87,7 +87,7 @@ int main(int argc, char* argv[]){
 					}
 				}
 				
-				if((neighbors == 2 || neighbors == 3) && board[i][j]){ nextboard[i][j] = true; }		//a live cell survives if it has 2 or 3 neighbors, it perishes other wise
+				if((neighbors == 2 || neighbors == 3) && board[i][j]){ nextboard[i][j] = true; }		//a live cell survives if it has 2 or 3 neighbors, it perishes otherwise
 				else if(neighbors == 3 && !board[i][j]){ nextboard[i][j] = true; }						//a dead cell comes alive if it has exactly 3 neighbors
 				else{ nextboard[i][j] = false; }
 			}
