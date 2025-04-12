@@ -23,6 +23,7 @@ const int WINH = 48;
 const int PIXS = 8;
 const int BOARDW = WINW;
 const int BOARDH = WINH;
+bool isPaused = false;
 
 //function takes a reference to board and randomizes it
 void RandomizeBoard(bool (&board)[BOARDW][BOARDH]){
@@ -70,31 +71,45 @@ int main(int argc, char* argv[]){
 				case SDLK_r:
 					RandomizeBoard(board);
 					break;
+				case SDLK_f:
+					isPaused = !isPaused;
+					break;
+				}
+			}
+			else if(event.type == SDL_MOUSEBUTTONDOWN){
+				int x, y;
+				SDL_GetMouseState(&x, &y);
+				x /= PIXS;
+				y /= PIXS;
+				if(x < BOARDW && y < BOARDH){
+					board[x][y] = !board[x][y];
 				}
 			}
 		}
-		
+
 		//update the game state here
-		bool nextboard[BOARDW][BOARDH] = {false};
-		for(int i = 0; i < BOARDW; i++){
-			for(int j = 0; j < BOARDH; j++){
-				int neighbors = 0;
-				for(int x = -1; x <= 1; x++){
-					for(int y = -1; y <= 1; y++){
-						if(i - x < 0 || i - x >= BOARDW || j - y < 0 || j - y >= BOARDH){ continue; }	//skip the edges of the board
-						if(x == 0 && y == 0){ continue; }												//skip the cell itself
-						if(board[i - x][j - y]){ neighbors++; }											//count the neighbors
+		if(!isPaused){
+			bool nextboard[BOARDW][BOARDH] = {false};
+			for(int i = 0; i < BOARDW; i++){
+				for(int j = 0; j < BOARDH; j++){
+					int neighbors = 0;
+					for(int x = -1; x <= 1; x++){
+						for(int y = -1; y <= 1; y++){
+							if(i - x < 0 || i - x >= BOARDW || j - y < 0 || j - y >= BOARDH){ continue; }	//skip the edges of the board
+							if(x == 0 && y == 0){ continue; }												//skip the cell itself
+							if(board[i - x][j - y]){ neighbors++; }											//count the neighbors
+						}
 					}
+					
+					if((neighbors == 2 || neighbors == 3) && board[i][j]){ nextboard[i][j] = true; }		//a live cell survives if it has 2 or 3 neighbors, it perishes otherwise
+					else if(neighbors == 3 && !board[i][j]){ nextboard[i][j] = true; }						//a dead cell comes alive if it has exactly 3 neighbors
+					else{ nextboard[i][j] = false; }
 				}
-				
-				if((neighbors == 2 || neighbors == 3) && board[i][j]){ nextboard[i][j] = true; }		//a live cell survives if it has 2 or 3 neighbors, it perishes otherwise
-				else if(neighbors == 3 && !board[i][j]){ nextboard[i][j] = true; }						//a dead cell comes alive if it has exactly 3 neighbors
-				else{ nextboard[i][j] = false; }
 			}
-		}
-		for(int i = 0; i < BOARDW; i++){
-			for(int j = 0; j < BOARDH; j++){
-				board[i][j] = nextboard[i][j];
+			for(int i = 0; i < BOARDW; i++){
+				for(int j = 0; j < BOARDH; j++){
+					board[i][j] = nextboard[i][j];
+				}
 			}
 		}
 
